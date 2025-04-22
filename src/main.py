@@ -1,6 +1,7 @@
 import pygame
 import sys
 from player import Player, Directions
+from ennemy import Ennemy
 
 SCREEN_WIDTH: int = 800
 SCREEN_HEIGHT: int = 600
@@ -35,7 +36,7 @@ def main() -> None:
         PLAYER_COLOR,
         PLAYER_SPEED,
     )
-    ennemy: Player = Player(
+    ennemy: Ennemy = Ennemy(
         ENNEMY_WIDTH, ENNEMY_HEIGHT, ennemy_position, ENNEMY_COLOR, ENNEMY_SPEED
     )
     while is_running:
