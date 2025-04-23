@@ -31,61 +31,75 @@ def main() -> None:
     ADD_ENNEMY_EVENT = pygame.USEREVENT + 1
     pygame.time.set_timer(ADD_ENNEMY_EVENT, 5000)
 
-    ennemies: list[Ennemy] = []
-    bullets: list[Bullet] = []
+    ennemies: list[pygame.Rect] = []
+    bullets: list[pygame.Rect] = []
     clock = pygame.time.Clock()
+
     is_running: bool = True
-    player: Player = Player(
+
+    player: pygame.Rect = pygame.Rect(
+        player_position[0],
+        player_position[1],
         PLAYER_WIDTH,
         PLAYER_HEIGHT,
-        player_position,
-        PLAYER_COLOR,
-        PLAYER_SPEED,
     )
 
     while is_running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 is_running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    print("space pressed")
+                    bullet: pygame.Rect = pygame.Rect(
+                        player_position[0], player_position[1] + player.width // 2, 5, 5
+                    )
+                bullets.append(bullet)
             elif event.type == ADD_ENNEMY_EVENT:
-                ennemy: Ennemy = Ennemy(
-                    ENNEMY_WIDTH,
-                    ENNEMY_HEIGHT,
-                    [64, 400],
-                    ENNEMY_COLOR,
-                    ENNEMY_SPEED,
-                )
+                ennemy: pygame.Rect = pygame.Rect(64, 400, ENNEMY_WIDTH, ENNEMY_HEIGHT)
+                pygame.draw.rect(screen, ENNEMY_COLOR, ennemy)
                 ennemies.append(ennemy)
+
         screen.fill((30, 30, 30))
 
         key = pygame.key.get_pressed()
         if key[pygame.K_LEFT] and player_position[0] > 0:
-            player.move(Directions.LEFT)
+            player.move_ip(-5, 0)
         if key[pygame.K_RIGHT] and player_position[0] < SCREEN_WIDTH - PLAYER_WIDTH:
-            player.move(Directions.RIGHT)
-        if key[pygame.K_SPACE]:
-            print("space pressed")
-            bullet: Bullet = Bullet(
-                5,
-                5,
-                [
-                    player.position[0],
-                    player.position[1] + player.width // 2,
-                ],
-                (0, 255, 0),
-                1,
-            )
-            bullets.append(bullet)
+            player.move_ip(5, 0)
 
+        # move all bullets
         for bullet in bullets:
-            bullet.move()
-            bullet.update(screen=screen)
+            bullet.move_ip(-1, 0)
+        # move all ennemies
         for ennemy in ennemies:
-            ennemy.move(Directions.RIGHT)
-            if ennemy.position[0] + ENNEMY_WIDTH > SCREEN_WIDTH:
-                ennemies.remove(ennemy)
-            ennemy.update(screen=screen)
-        player.update(screen=screen)
+
+            ennemy.move_ip(1, 0)
+
+        # check collisions between bullets and ennemies
+        collied_bullets = []
+        collied_ennemies = []
+
+        for ennemy in ennemies:
+            for bullet in bullets:
+                if ennemy.colliderect(bullet):
+                    collied_ennemies.append(ennemy)
+                    collied_bullets.append(bullet)
+            if ennemy.colliderect(player):
+                is_running = False
+
+        # remove bullets
+        bullets = [bullet for bullet in bullets if bullet not in collied_bullets]
+        # remove ennemies
+        ennemies = [ennemy for ennemy in ennemies if ennemy not in collied_ennemies]
+        # draw bullets
+        for bullet in bullets:
+            pygame.draw.rect(screen, (0, 255, 0), bullet)
+        # draw ennemies
+        for ennemy in ennemies:
+            pygame.draw.rect(screen, ENNEMY_COLOR, ennemy)
+
+        pygame.draw.rect(screen, PLAYER_COLOR, player)
 
         clock.tick(FPS)
         pygame.display.update()
