@@ -39,13 +39,7 @@ def game(screen) -> bool:
             if event.type == pygame.QUIT:
                 is_running = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    if player.x > 0:
-                        player.move_ip(-5, 0)
-                elif event.key == pygame.K_RIGHT:
-                    if player.x + player.width < SCREEN_WIDTH:
-                        player.move_ip(5, 0)
-                elif event.key == pygame.K_SPACE:
+                if event.key == pygame.K_SPACE:
                     print("space pressed")
                     bullet: pygame.Rect = pygame.Rect(
                         player.x, player.y + player.width // 2, 5, 5
@@ -57,6 +51,12 @@ def game(screen) -> bool:
                 ennemies.append(ennemy)
 
         screen.fill((30, 30, 30))
+
+        key = pygame.key.get_pressed()
+        if key[pygame.K_LEFT] and player.x > 0:
+            player.move_ip(-5, 0)
+        if key[pygame.K_RIGHT] and player.x < SCREEN_WIDTH - PLAYER_WIDTH:
+            player.move_ip(5, 0)
 
         # move all bullets
         for bullet in bullets:
