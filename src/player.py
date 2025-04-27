@@ -1,44 +1,41 @@
-import enum
-
+from typing import Tuple
 import pygame
+from abc import ABC
+
+Dimensions = Tuple[int, int]
 
 
-class Directions(enum.Enum):
-    LEFT = "left"
-    RIGHT = "right"
-
-
-class Player:
-    width: int
-    height: int
-    position: list[int]
-    color: tuple[int, int, int]
-    speed: int
-
+class Entity(ABC):
     def __init__(
         self,
+        left: float,
+        top: float,
+        width: float,
+        height: float,
+        color: pygame.Color,
+    ) -> None:
+        self.rect: pygame.Rect = pygame.Rect(left, top, width, height)
+        self.color: pygame.Color = color
+
+    def update(self) -> None:
+        pygame.draw.rect(pygame.display.get_surface(), self.color, self.rect)
+
+
+class Player(Entity):
+    def __init__(
+        self,
+        x: int,
+        y: int,
         width: int,
         height: int,
-        position: list[int],
-        color: tuple[int, int, int],
+        color: pygame.Color,
         speed: int,
-    ):
-        self.width = width
-        self.height = height
-        self.position = position
-        self.color = color
+    ) -> None:
+        super().__init__(left=x, top=y, width=width, height=height, color=color)
         self.speed = speed
 
-    def move(self, direction: Directions) -> None:
-        match direction:
-            case Directions.LEFT:
-                self.position[0] -= self.speed
-            case Directions.RIGHT:
-                self.position[0] += self.speed
+    def move_left(self) -> None:
+        self.rect.move_ip(-self.speed, 0)
 
-    def update(self, screen):
-        pygame.draw.rect(
-            screen,
-            self.color,
-            (*self.position, self.width, self.height),
-        )
+    def move_right(self) -> None:
+        self.rect.move_ip(self.speed, 0)
