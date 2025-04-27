@@ -2,8 +2,6 @@ from typing import Tuple
 import pygame
 from abc import ABC
 
-Dimensions = Tuple[int, int]
-
 
 class Entity(ABC):
     def __init__(
