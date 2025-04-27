@@ -37,7 +37,8 @@ def game(screen) -> bool:
     while is_running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                is_running = False
+                pygame.quit()
+                sys.exit(0)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     print("space pressed")
