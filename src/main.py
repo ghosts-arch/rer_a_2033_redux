@@ -2,7 +2,7 @@ import pygame
 import sys
 from player import Player
 
-# from ennemy import Ennemy
+from enemy import Enemy
 from bullet import Bullet
 
 SCREEN_WIDTH: int = 800
@@ -35,7 +35,7 @@ def game(screen) -> bool:
         color=PLAYER_COLOR,
         speed=PLAYER_SPEED,
     )
-    ennemies: list[pygame.Rect] = []
+    ennemies: list[Enemy] = []
     bullets: list[pygame.Rect] = []
     while is_running:
         for event in pygame.event.get():
@@ -50,8 +50,14 @@ def game(screen) -> bool:
                     )
                     bullets.append(bullet)
             elif event.type == ADD_ENNEMY_EVENT:
-                ennemy: pygame.Rect = pygame.Rect(64, 400, ENNEMY_WIDTH, ENNEMY_HEIGHT)
-                pygame.draw.rect(screen, ENNEMY_COLOR, ennemy)
+                ennemy: Enemy = Enemy(
+                    left=ennemy_position[0],
+                    top=ennemy_position[1],
+                    width=ENNEMY_WIDTH,
+                    height=ENNEMY_HEIGHT,
+                    color=ENNEMY_COLOR,
+                    speed=ENNEMY_SPEED,
+                )
                 ennemies.append(ennemy)
 
         screen.fill((30, 30, 30))
@@ -70,7 +76,7 @@ def game(screen) -> bool:
                 print("bullet removed")
         # move all ennemies
         for ennemy in ennemies:
-            ennemy.move_ip(1, 0)
+            ennemy.move_right()
 
         # check collisions between bullets and ennemies
         collied_bullets = []
@@ -78,10 +84,10 @@ def game(screen) -> bool:
 
         for ennemy in ennemies:
             for bullet in bullets:
-                if ennemy.colliderect(bullet):
+                if ennemy.rect.colliderect(bullet):
                     collied_ennemies.append(ennemy)
                     collied_bullets.append(bullet)
-            if ennemy.colliderect(player.rect):
+            if ennemy.rect.colliderect(player.rect):
                 is_running = False
 
         # remove bullets
@@ -93,7 +99,7 @@ def game(screen) -> bool:
             pygame.draw.rect(screen, (0, 255, 0), bullet)
         # draw ennemies
         for ennemy in ennemies:
-            pygame.draw.rect(screen, ENNEMY_COLOR, ennemy)
+            ennemy.update()
 
         player.update()
 
