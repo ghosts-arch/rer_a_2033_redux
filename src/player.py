@@ -1,22 +1,5 @@
 from typing import Tuple
-import pygame
-from abc import ABC
-
-
-class Entity(ABC):
-    def __init__(
-        self,
-        left: float,
-        top: float,
-        width: float,
-        height: float,
-        color: pygame.Color,
-    ) -> None:
-        self.rect: pygame.Rect = pygame.Rect(left, top, width, height)
-        self.color: pygame.Color = color
-
-    def update(self) -> None:
-        pygame.draw.rect(pygame.display.get_surface(), self.color, self.rect)
+from entity import Entity
 
 
 class Player(Entity):
@@ -26,7 +9,7 @@ class Player(Entity):
         y: int,
         width: int,
         height: int,
-        color: pygame.Color,
+        color: Tuple[int, int, int],
         speed: int,
     ) -> None:
         super().__init__(left=x, top=y, width=width, height=height, color=color)
