@@ -1,29 +1,11 @@
-import pygame
+from entity import Entity
 
 
-class Bullet:
-    width: int
-    height: int
-    position: list[int]
-    color: tuple[int, int, int]
-    speed: int
+class Bullet(Entity):
+    def __init__(self, left, top, width, height, color):
+        super().__init__(left, top, width, height, color)
 
-    def __init__(
-        self,
-        width: int,
-        height: int,
-        position: list[int],
-        color: tuple[int, int, int],
-        speed: int,
-    ) -> None:
-        self.width = width
-        self.height = height
-        self.position = position
-        self.color = color
-        self.speed = speed
+        self.speed = 1
 
-    def move(self) -> None:
-        self.position[0] -= self.speed
-
-    def update(self, screen) -> None:
-        pygame.draw.rect(screen, self.color, (*self.position, self.width, self.height))
+    def move_left(self) -> None:
+        self.rect.move_ip(-self.speed, 0)

@@ -36,7 +36,7 @@ def game(screen) -> bool:
         speed=PLAYER_SPEED,
     )
     ennemies: list[Enemy] = []
-    bullets: list[pygame.Rect] = []
+    bullets: list[Bullet] = []
     while is_running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -45,8 +45,12 @@ def game(screen) -> bool:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     print("space pressed")
-                    bullet: pygame.Rect = pygame.Rect(
-                        player.rect.x, player.rect.y + player.rect.width // 2, 5, 5
+                    bullet: Bullet = Bullet(
+                        player.rect.x,
+                        player.rect.y + player.rect.width // 2,
+                        5,
+                        5,
+                        (0, 255, 0),
                     )
                     bullets.append(bullet)
             elif event.type == ADD_ENNEMY_EVENT:
@@ -70,8 +74,8 @@ def game(screen) -> bool:
 
         # move all bullets
         for bullet in bullets:
-            bullet.move_ip(-1, 0)
-            if bullet.x < 0:
+            bullet.move_left()
+            if bullet.rect.x < 0:
                 bullets.remove(bullet)
                 print("bullet removed")
         # move all ennemies
@@ -84,7 +88,7 @@ def game(screen) -> bool:
 
         for ennemy in ennemies:
             for bullet in bullets:
-                if ennemy.rect.colliderect(bullet):
+                if ennemy.rect.colliderect(bullet.rect):
                     collied_ennemies.append(ennemy)
                     collied_bullets.append(bullet)
             if ennemy.rect.colliderect(player.rect):
@@ -96,7 +100,7 @@ def game(screen) -> bool:
         ennemies = [ennemy for ennemy in ennemies if ennemy not in collied_ennemies]
         # draw bullets
         for bullet in bullets:
-            pygame.draw.rect(screen, (0, 255, 0), bullet)
+            bullet.update()
         # draw ennemies
         for ennemy in ennemies:
             ennemy.update()
