@@ -14,6 +14,7 @@ class Player(Entity):
     ) -> None:
         super().__init__(left=x, top=y, width=width, height=height, color=color)
         self.speed = speed
+        self.munitions = 20
 
     def move_left(self) -> None:
         self.rect.move_ip(-self.speed, 0)

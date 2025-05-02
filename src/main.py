@@ -23,6 +23,8 @@ ENNEMY_SPEED: int = 1
 
 
 def game(screen) -> bool:
+    font = pygame.font.Font(None, 32)
+
     ADD_ENNEMY_EVENT = pygame.USEREVENT + 1
     pygame.time.set_timer(ADD_ENNEMY_EVENT, 5000)
     is_running: bool = True
@@ -35,9 +37,12 @@ def game(screen) -> bool:
         color=PLAYER_COLOR,
         speed=PLAYER_SPEED,
     )
+
     ennemies: list[Enemy] = []
     bullets: list[Bullet] = []
+    munitions_text = f"{player.munitions}/20"
     while is_running:
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -45,14 +50,21 @@ def game(screen) -> bool:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     print("space pressed")
-                    bullet: Bullet = Bullet(
-                        player.rect.x,
-                        player.rect.y + player.rect.width // 2,
-                        5,
-                        5,
-                        (0, 255, 0),
-                    )
-                    bullets.append(bullet)
+                    if player.munitions > 0:
+                        bullet: Bullet = Bullet(
+                            player.rect.x,
+                            player.rect.y + player.rect.width // 2,
+                            5,
+                            5,
+                            (0, 255, 0),
+                        )
+                        bullets.append(bullet)
+                        player.munitions = player.munitions - 1
+                        munitions_text = f"{player.munitions}/20"
+                        print(f"munitions: {player.munitions}")
+                elif event.key == pygame.K_r:
+                    player.munitions = 20
+                    munitions_text = f"{player.munitions}/20"
             elif event.type == ADD_ENNEMY_EVENT:
                 ennemy: Enemy = Enemy(
                     left=ennemy_position[0],
@@ -65,6 +77,10 @@ def game(screen) -> bool:
                 ennemies.append(ennemy)
 
         screen.fill((30, 30, 30))
+        munitions_text_surface = font.render(munitions_text, True, (255, 255, 255))
+        munitions_text_rectangle = munitions_text_surface.get_rect(topleft=(32, 32))
+
+        screen.blit(munitions_text_surface, munitions_text_rectangle)
 
         key = pygame.key.get_pressed()
         if key[pygame.K_LEFT] and player.rect.x > 0:
