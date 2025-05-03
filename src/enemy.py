@@ -15,6 +15,7 @@ class Enemy(Entity):
     ) -> None:
         super().__init__(left, top, width, height, color)
         self.speed = speed
+        self.life = 3
 
     def move_right(self) -> None:
         self.rect.move_ip(self.speed, 0)
