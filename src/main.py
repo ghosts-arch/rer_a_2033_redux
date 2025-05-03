@@ -100,13 +100,16 @@ def game(screen) -> bool:
 
         # check collisions between bullets and ennemies
         collied_bullets = []
-        collied_ennemies = []
+        collied_ennemies: list[Enemy] = []
 
         for ennemy in ennemies:
             for bullet in bullets:
                 if ennemy.rect.colliderect(bullet.rect):
-                    collied_ennemies.append(ennemy)
+                    ennemy.life = ennemy.life - 1
                     collied_bullets.append(bullet)
+                    if ennemy.life == 0:
+                        collied_ennemies.append(ennemy)
+                    print(ennemy.life)
             if ennemy.rect.colliderect(player.rect):
                 is_running = False
 
