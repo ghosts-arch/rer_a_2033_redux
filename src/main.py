@@ -4,22 +4,7 @@ from player import Player
 
 from enemy import Enemy
 from bullet import Bullet
-
-SCREEN_WIDTH: int = 800
-SCREEN_HEIGHT: int = 600
-FPS: int = 60
-
-player_position: list[int] = [672, 400]
-PLAYER_WIDTH: int = 32
-PLAYER_HEIGHT: int = 64
-PLAYER_COLOR: tuple[int, int, int] = (0, 0, 255)
-PLAYER_SPEED: int = 1
-
-ennemy_position: list[int] = [64, 400]
-ENNEMY_WIDTH: int = 32
-ENNEMY_HEIGHT: int = 64
-ENNEMY_COLOR: tuple[int, int, int] = (255, 0, 0)
-ENNEMY_SPEED: int = 1
+import settings
 
 
 def game(screen) -> bool:
@@ -30,17 +15,17 @@ def game(screen) -> bool:
     is_running: bool = True
     clock = pygame.time.Clock()
     player: Player = Player(
-        x=player_position[0],
-        y=player_position[1],
-        width=PLAYER_WIDTH,
-        height=PLAYER_HEIGHT,
-        color=PLAYER_COLOR,
-        speed=PLAYER_SPEED,
+        x=settings.PLAYER_POSITION[0],
+        y=settings.PLAYER_POSITION[1],
+        width=settings.PLAYER_WIDTH,
+        height=settings.PLAYER_HEIGHT,
+        color=settings.PLAYER_COLOR,
+        speed=settings.PLAYER_SPEED,
     )
 
     ennemies: list[Enemy] = []
     bullets: list[Bullet] = []
-    munitions_text = f"{player.munitions}/20"
+    munitions_text = f"{player.munitions}/{settings.PLAYER_MAXIMUM_MUNITIONS}"
     while is_running:
 
         for event in pygame.event.get():
@@ -54,25 +39,29 @@ def game(screen) -> bool:
                         bullet: Bullet = Bullet(
                             player.rect.x,
                             player.rect.y + player.rect.width // 2,
-                            5,
-                            5,
-                            (0, 255, 0),
+                            settings.BULLET_WIDTH,
+                            settings.BULLET_HEIGHT,
+                            settings.BULLET_COLOR,
                         )
                         bullets.append(bullet)
                         player.munitions = player.munitions - 1
-                        munitions_text = f"{player.munitions}/20"
+                        munitions_text = (
+                            f"{player.munitions}/{settings.PLAYER_MAXIMUM_MUNITIONS}"
+                        )
                         print(f"munitions: {player.munitions}")
                 elif event.key == pygame.K_r:
-                    player.munitions = 20
-                    munitions_text = f"{player.munitions}/20"
+                    player.munitions = settings.PLAYER_MAXIMUM_MUNITIONS
+                    munitions_text = (
+                        f"{player.munitions}/{settings.PLAYER_MAXIMUM_MUNITIONS}"
+                    )
             elif event.type == ADD_ENNEMY_EVENT:
                 ennemy: Enemy = Enemy(
-                    left=ennemy_position[0],
-                    top=ennemy_position[1],
-                    width=ENNEMY_WIDTH,
-                    height=ENNEMY_HEIGHT,
-                    color=ENNEMY_COLOR,
-                    speed=ENNEMY_SPEED,
+                    left=settings.ENEMY_POSITION[0],
+                    top=settings.ENEMY_POSITION[1],
+                    width=settings.ENEMY_WIDTH,
+                    height=settings.ENEMY_HEIGHT,
+                    color=settings.ENEMY_COLOR,
+                    speed=settings.ENEMY_SPEED,
                 )
                 ennemies.append(ennemy)
 
@@ -85,7 +74,10 @@ def game(screen) -> bool:
         key = pygame.key.get_pressed()
         if key[pygame.K_LEFT] and player.rect.x > 0:
             player.move_left()
-        if key[pygame.K_RIGHT] and player.rect.x < SCREEN_WIDTH - PLAYER_WIDTH:
+        if (
+            key[pygame.K_RIGHT]
+            and player.rect.x < settings.SCREEN_WIDTH - settings.PLAYER_WIDTH
+        ):
             player.move_right()
 
         # move all bullets
@@ -126,7 +118,7 @@ def game(screen) -> bool:
 
         player.update()
 
-        clock.tick(FPS)
+        clock.tick(settings.FPS)
         pygame.display.update()
     return is_running
 
@@ -135,7 +127,7 @@ def main() -> None:
     print("Hello from rer-a-2033-redux!")
     pygame.init()
 
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT))
     pygame.display.set_caption("RER A 2033 Redux")
 
     ADD_ENNEMY_EVENT = pygame.USEREVENT + 1
@@ -169,7 +161,7 @@ def main() -> None:
         if key[pygame.K_RETURN]:
             print("game started...")
             game(screen)
-        clock.tick(FPS)
+        clock.tick(settings.FPS)
         pygame.display.update()
 
     pygame.quit()

@@ -2,8 +2,7 @@ from typing import Tuple
 
 import pygame
 from entity import Entity
-
-TOTAL_LIFE: int = 3
+from settings import ENEMY_TOTAL_LIFE, ENEMY_WIDTH, RED
 
 
 class Enemy(Entity):
@@ -20,12 +19,14 @@ class Enemy(Entity):
         super().__init__(left, top, width, height, color)
         self.lifebar = pygame.Rect(left, top - 15, width, 5)
         self.speed = speed
-        self.life = TOTAL_LIFE
+        self.life = ENEMY_TOTAL_LIFE
 
     def update(self):
-        self.lifebar.width = (((self.life * 100) / TOTAL_LIFE) * 32) / 100
+        self.lifebar.width = (
+            ((self.life * 100) / ENEMY_TOTAL_LIFE) * ENEMY_WIDTH
+        ) / 100
         pygame.draw.rect(pygame.display.get_surface(), self.color, self.rect)
-        pygame.draw.rect(pygame.display.get_surface(), (255, 0, 0), self.lifebar)
+        pygame.draw.rect(pygame.display.get_surface(), RED, self.lifebar)
 
     def move_right(self) -> None:
         self.rect.move_ip(self.speed, 0)

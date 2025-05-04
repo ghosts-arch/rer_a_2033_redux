@@ -1,5 +1,6 @@
 from typing import Tuple
 from entity import Entity
+from settings import PLAYER_MAXIMUM_MUNITIONS
 
 
 class Player(Entity):
@@ -14,7 +15,7 @@ class Player(Entity):
     ) -> None:
         super().__init__(left=x, top=y, width=width, height=height, color=color)
         self.speed = speed
-        self.munitions = 20
+        self.munitions = PLAYER_MAXIMUM_MUNITIONS
 
     def move_left(self) -> None:
         self.rect.move_ip(-self.speed, 0)
